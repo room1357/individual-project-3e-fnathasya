@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ImageGallery extends StatelessWidget {
   final int imageCount;
-  
+
   const ImageGallery({
     Key? key,
     this.imageCount = 6,
@@ -13,7 +13,9 @@ class ImageGallery extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 8),
-        const Text('My Gallery', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.teal)),
+        const Text('My Gallery',
+            style: TextStyle(
+                fontSize: 22, fontWeight: FontWeight.bold, color: Colors.teal)),
         const SizedBox(height: 10),
         SizedBox(
           height: 300,
@@ -36,7 +38,9 @@ class ImageGallery extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network('https://picsum.photos/300/300?random=$index', fit: BoxFit.cover),
+                  child: Image.network(
+                      'https://picsum.photos/300/300?random=$index',
+                      fit: BoxFit.cover),
                 ),
               );
             }),

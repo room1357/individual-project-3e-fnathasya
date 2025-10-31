@@ -4,11 +4,22 @@ import 'screens/home_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'utils/preferences_helper.dart';
+import 'models/user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final user = await PreferencesHelper.getUser();
-  final bool isLoggedIn = user != null;
+
+  // ==== temporary: create sample user if none (untuk testing) ====
+  if (user == null) {
+    final sample = User(username: 'testuser', email: 'test@example.com', phone: '+62000');
+    await PreferencesHelper.saveUser(sample);
+    print('Created sample user for testing');
+  }
+  // ==============================================================
+
+  final bool isLoggedIn = (await PreferencesHelper.getUser()) != null;
+  runApp(MyApp(isLoggedIn: isLoggedIn));
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 

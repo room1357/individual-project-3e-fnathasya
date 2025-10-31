@@ -23,15 +23,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadUser() async {
     final u = await PreferencesHelper.getUser();
-    if (mounted) setState(() {
-      user = u;
-      loading = false;
-    });
+    if (mounted)
+      setState(() {
+        user = u;
+        loading = false;
+      });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (loading)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
     return Scaffold(
       backgroundColor: Colors.teal,
@@ -40,13 +42,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: SingleChildScrollView(
           child: Column(children: [
             const SizedBox(height: 16),
-            Container(padding: const EdgeInsets.all(20.0), child: BusinessCard(
-              username: user?.username ?? 'Guest',
-              role: user?.role ?? 'FLUTTER DEVELOPER',
-              phone: user?.phone ?? '+62 000 0000',
-              email: user?.email ?? 'example@example.com',
-            )),
-            Container(padding: const EdgeInsets.all(8.0), color: Colors.white, child: const ImageGallery()),
+            Container(
+                padding: const EdgeInsets.all(20.0),
+                child: BusinessCard(
+                  username: user?.username ?? 'Guest',
+                  role: user?.role ?? 'FLUTTER DEVELOPER',
+                  phone: user?.phone ?? '+62 000 0000',
+                  email: user?.email ?? 'example@example.com',
+                )),
+            Container(
+                padding: const EdgeInsets.all(8.0),
+                color: Colors.white,
+                child: const ImageGallery()),
           ]),
         ),
       ),

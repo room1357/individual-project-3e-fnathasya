@@ -28,14 +28,16 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await PreferencesHelper.getUser();
       if (user == null) {
         // minimal fallback user
-        await PreferencesHelper.saveUser(User(username: _usernameController.text.trim()));
+        await PreferencesHelper.saveUser(
+            User(username: _usernameController.text.trim()));
       }
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home');
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid credentials')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Invalid credentials')));
       }
     }
     if (mounted) setState(() => _loading = false);
@@ -51,35 +53,46 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login'), automaticallyImplyLeading: false),
+      appBar:
+          AppBar(title: const Text('Login'), automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Center(
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Username', border: OutlineInputBorder()),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Please enter username' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
-                  obscureText: true,
-                  validator: (v) => (v == null || v.isEmpty) ? 'Please enter password' : null,
-                ),
-                const SizedBox(height: 24),
-                _loading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(onPressed: _login, child: const Text('Login')),
-                TextButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
-                  child: const Text("Don't have an account? Register"),
-                ),
-              ]),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                          labelText: 'Username', border: OutlineInputBorder()),
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Please enter username'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                          labelText: 'Password', border: OutlineInputBorder()),
+                      obscureText: true,
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Please enter password'
+                          : null,
+                    ),
+                    const SizedBox(height: 24),
+                    _loading
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: _login, child: const Text('Login')),
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/register'),
+                      child: const Text("Don't have an account? Register"),
+                    ),
+                  ]),
             ),
           ),
         ),

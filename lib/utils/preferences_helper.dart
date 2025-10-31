@@ -12,21 +12,24 @@ class PreferencesHelper {
     final prefs = await SharedPreferences.getInstance();
     final userData = jsonEncode(user.toJson());
     await prefs.setString(userKey, userData);
-    // compatibility keys
     await prefs.setString('username', user.username);
     await prefs.setBool(isLoggedKey, true);
+    print('PreferencesHelper.saveUser -> saved: $userData'); // debug
   }
 
   static Future<User?> getUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userData = prefs.getString(userKey);
+    print('PreferencesHelper.getUser -> raw userData: $userData'); // debug
     if (userData != null) {
       return User.fromJson(jsonDecode(userData));
     }
     final uname = prefs.getString('username');
     if (uname != null) {
+      print('PreferencesHelper.getUser -> fallback username: $uname'); // debug
       return User(username: uname);
     }
+    print('PreferencesHelper.getUser -> no user found');
     return null;
   }
 

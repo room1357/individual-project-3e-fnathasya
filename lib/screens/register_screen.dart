@@ -53,7 +53,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register'), automaticallyImplyLeading: false),
+      appBar: AppBar(
+          title: const Text('Register'), automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -62,13 +63,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(children: [
               TextFormField(
                 controller: _usernameController,
-                decoration: const InputDecoration(labelText: 'Username', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.isEmpty) ? 'Please enter username' : null,
+                decoration: const InputDecoration(
+                    labelText: 'Username', border: OutlineInputBorder()),
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Please enter username' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'Email', border: OutlineInputBorder()),
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Please enter email';
                   if (!v.contains('@')) return 'Invalid email';
@@ -78,30 +82,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'Phone', border: OutlineInputBorder()),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'Password', border: OutlineInputBorder()),
                 obscureText: true,
-                validator: (v) => (v == null || v.isEmpty) ? 'Please enter password' : null,
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Please enter password' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _confirmPasswordController,
-                decoration: const InputDecoration(labelText: 'Confirm Password', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'Confirm Password',
+                    border: OutlineInputBorder()),
                 obscureText: true,
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Please confirm password';
-                  if (v != _passwordController.text) return 'Passwords do not match';
+                  if (v != _passwordController.text)
+                    return 'Passwords do not match';
                   return null;
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: _register, child: const Text('Register')),
+              ElevatedButton(
+                  onPressed: _register, child: const Text('Register')),
               TextButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, '/login'),
                 child: const Text('Already have an account? Login'),
               ),
             ]),
