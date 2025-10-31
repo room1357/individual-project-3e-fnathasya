@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SimpleImageGallery extends StatelessWidget {
-  const SimpleImageGallery({Key? key}) : super(key: key);
+  const SimpleImageGallery({super.key});
 
   @override
   Widget build(BuildContext context) {

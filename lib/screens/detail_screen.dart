@@ -6,7 +6,7 @@ class DetailScreen extends StatelessWidget {
 
   final String productId;
 
-  const DetailScreen({Key? key, required this.productId}) : super(key: key);
+  const DetailScreen({super.key, required this.productId});
 
   @override
   Widget build(BuildContext context) {

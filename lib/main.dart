@@ -1,42 +1,35 @@
 import 'package:flutter/material.dart';
-import 'screens/detail_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/settings_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'home_page.dart';
+import 'login_page.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  // Pastikan Flutter binding sudah diinisialisasi
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Dapatkan instance SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  // Baca status login, default-nya false jika tidak ada
+  final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
+  final bool isLoggedIn;
+
+  const MyApp({super.key, required this.isLoggedIn});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Named Routes Example',
-      // 1. Definisikan initialRoute
-      initialRoute: '/',
-      // 2. Definisikan semua rute yang tersedia
+      title: 'Form & Persistence',
+      // Tentukan halaman awal berdasarkan status login
+      home: isLoggedIn ? HomePage() : LoginPage(),
+      // Definisikan rute untuk navigasi
       routes: {
-        '/': (context) => HomeScreen(),
-        // Kita akan menangani rute '/detail' secara khusus nanti
-        // untuk bisa membaca argumen.
-        '/settings': (context) => SettingsScreen(),
-      },
-      // 3. Gunakan onGenerateRoute untuk rute yang butuh logika tambahan
-      onGenerateRoute: (settings) {
-        if (settings.name == DetailScreen.routeName) {
-          // Ekstrak argumen yang dikirim
-          final args = settings.arguments as String;
-
-          // Buat MaterialPageRoute
-          return MaterialPageRoute(
-            builder: (context) {
-              return DetailScreen(productId: args);
-            },
-          );
-        }
-        // Jika rute tidak ditemukan, bisa tampilkan halaman error
-        assert(false, 'Need to implement ${settings.name}');
-        return null;
+        '/login': (context) => LoginPage(),
+        '/home': (context) => HomePage(),
       },
     );
   }

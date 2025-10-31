@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DigitalBusinessCard extends StatelessWidget {
-  const DigitalBusinessCard({Key? key}) : super(key: key);
+  const DigitalBusinessCard({super.key});
 
   @override
   Widget build(BuildContext context) {
