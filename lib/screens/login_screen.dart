@@ -1,83 +1,100 @@
 import 'package:flutter/material.dart';
+import '../utils/preferences_helper.dart';
+import '../models/user.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _loading = false;
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _loading = true);
+    final ok = await PreferencesHelper.checkCredentials(
+      _usernameController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (ok) {
+      // load saved user (if exists) and ensure isLoggedIn true
+      final user = await PreferencesHelper.getUser();
+      if (user == null) {
+        // minimal fallback user
+        await PreferencesHelper.saveUser(
+            User(username: _usernameController.text.trim()));
+      }
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Invalid credentials')));
+      }
+    }
+    if (mounted) setState(() => _loading = false);
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login'), backgroundColor: Colors.blue),
+      appBar:
+          AppBar(title: const Text('Login'), automaticallyImplyLeading: false),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.person, size: 50, color: Colors.white),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                          labelText: 'Username', border: OutlineInputBorder()),
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Please enter username'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                          labelText: 'Password', border: OutlineInputBorder()),
+                      obscureText: true,
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Please enter password'
+                          : null,
+                    ),
+                    const SizedBox(height: 24),
+                    _loading
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: _login, child: const Text('Login')),
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/register'),
+                      child: const Text("Don't have an account? Register"),
+                    ),
+                  ]),
             ),
-            SizedBox(height: 32),
-
-            // Username Field
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Username',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Password Field
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-            ),
-            SizedBox(height: 24),
-
-            // Login Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle login
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  'LOGIN',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Register Link
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Don't have an account? "),
-                TextButton(
-                  onPressed: () {
-                    // Navigate to register
-                  },
-                  child: Text('Register'),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

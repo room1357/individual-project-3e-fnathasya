@@ -1,139 +1,109 @@
 import 'package:flutter/material.dart';
+import '../models/user.dart';
+import '../utils/preferences_helper.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  User? user;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final loaded = await PreferencesHelper.getUser();
+    if (mounted) {
+      setState(() {
+        user = loaded;
+        loading = false;
+      });
+    }
+  }
+
+  Future<void> _logout() async {
+    await PreferencesHelper.setLoggedOut();
+    if (mounted) Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+
+    final avatarUrl = (user != null && user!.username.isNotEmpty)
+        ? 'https://i.pravatar.cc/150?u=${Uri.encodeComponent(user!.username)}'
+        : 'https://i.pravatar.cc/150?img=65';
+
+    final features = [
+      {'label': 'Profile', 'icon': Icons.person, 'route': '/profile'},
+      {'label': 'Gallery', 'icon': Icons.photo, 'route': '/gallery'},
+      {'label': 'Business Card', 'icon': Icons.badge, 'route': '/card'},
+      {'label': 'Settings', 'icon': Icons.settings, 'route': '/settings'},
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
-        backgroundColor: Colors.blue,
+        title: const Text('Home'),
+        automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            onPressed: () {
-              // Handle logout
-            },
-            icon: Icon(Icons.logout),
-          ),
+          IconButton(onPressed: _logout, icon: const Icon(Icons.logout)),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 40, color: Colors.blue),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Welcome User!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () {
-                // Handle logout
-              },
-            ),
-          ],
-        ),
-      ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Dashboard',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
+            // header with avatar + name
+            Row(
+              children: [
+                CircleAvatar(radius: 36, backgroundImage: NetworkImage(avatarUrl)),
+                const SizedBox(width: 12),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(user?.username ?? 'Guest', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(user?.role ?? 'FLUTTER DEVELOPER', style: const TextStyle(color: Colors.grey)),
+                ]),
+              ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            // features grid
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  _buildDashboardCard('Profile', Icons.person, Colors.green),
-                  _buildDashboardCard('Messages', Icons.message, Colors.orange),
-                  _buildDashboardCard('Settings', Icons.settings, Colors.purple),
-                  _buildDashboardCard('Help', Icons.help, Colors.red),
-                ],
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                children: features.map((f) {
+                  return InkWell(
+                    onTap: () => Navigator.pushNamed(context, f['route'] as String),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.teal.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.teal.shade100),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(f['icon'] as IconData, size: 40, color: Colors.teal),
+                          const SizedBox(height: 8),
+                          Text(f['label'] as String, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDashboardCard(String title, IconData icon, Color color) {
-    return Card(
-      elevation: 4,
-      child: InkWell(
-        onTap: () {
-          // Handle card tap
-        },
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 48, color: color),
-              SizedBox(height: 12),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
