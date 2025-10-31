@@ -5,7 +5,7 @@ import '../widgets/business_card.dart';
 import '../widgets/image_gallery.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -23,38 +23,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadUser() async {
     final u = await PreferencesHelper.getUser();
-    if (mounted)
+    if (mounted) {
       setState(() {
         user = u;
         loading = false;
       });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading)
+    if (loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       backgroundColor: Colors.teal,
       appBar: AppBar(title: const Text('Profile')),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(children: [
-            const SizedBox(height: 16),
-            Container(
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              Container(
                 padding: const EdgeInsets.all(20.0),
                 child: BusinessCard(
                   username: user?.username ?? 'Guest',
                   role: user?.role ?? 'FLUTTER DEVELOPER',
                   phone: user?.phone ?? '+62 000 0000',
                   email: user?.email ?? 'example@example.com',
-                )),
-            Container(
+                ),
+              ),
+              Container(
                 padding: const EdgeInsets.all(8.0),
                 color: Colors.white,
-                child: const ImageGallery()),
-          ]),
+                child: const ImageGallery(),
+              ),
+            ],
+          ),
         ),
       ),
     );

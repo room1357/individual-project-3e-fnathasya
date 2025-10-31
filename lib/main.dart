@@ -3,23 +3,15 @@ import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/gallery_screen.dart';
+import 'screens/business_card_screen.dart';
+import 'screens/settings_screen.dart';
 import 'utils/preferences_helper.dart';
-import 'models/user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final user = await PreferencesHelper.getUser();
-
-  // ==== temporary: create sample user if none (untuk testing) ====
-  if (user == null) {
-    final sample = User(username: 'testuser', email: 'test@example.com', phone: '+62000');
-    await PreferencesHelper.saveUser(sample);
-    print('Created sample user for testing');
-  }
-  // ==============================================================
-
-  final bool isLoggedIn = (await PreferencesHelper.getUser()) != null;
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  final bool isLoggedIn = user != null;
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
@@ -41,6 +33,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/gallery': (context) => const GalleryScreen(),
+        '/card': (context) => const BusinessCardScreen(),
+        '/settings': (context) => const SettingsScreen(),
       },
     );
   }
