@@ -1,6 +1,6 @@
 # pemrograman_mobile
 
-A new Flutter project.
+Journey for learn my first Flutter project.
 
 ## Getting Started
 
